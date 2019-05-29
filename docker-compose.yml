@@ -1,0 +1,31 @@
+# WARNING: this file is not suitable for production, please use with caution
+version: '3'
+networks:
+  zop_net:
+volumes:
+  mysql_data:
+services:
+  msyql:
+    image: mysql:5.7
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=letsg0
+    ports:
+      - "3306:3306"
+    networks:
+      zop_net:
+        aliases:
+          - zop_mysql_net
+    volumes:
+      - mysql_data:/var/lib/msyql
+  web:
+    image: zop
+    build: .
+    env_file:
+      - ./.flaskenv
+    environment:
+      - DATABASE_URI=mysql://root:letsg0@zop_mysql_net/zop
+    volumes:
+      - .:/ZOP
+    ports:
+      - "5000:5000"
