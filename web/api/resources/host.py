@@ -1,13 +1,29 @@
+import math
 from ast import literal_eval
 
+from docker.errors import DockerException
 from flask import request
 from flask_io import fields
 from flask_restful import Resource
 
 from web.commons import Setting
+from web.commons.docker import DockerClient
 from web.commons.pagination import paginate
+from web.commons.ssh import ssh_ping, generate_and_save_ssh_key
+from web.commons.utils import response
 from web.extensions import ma, db, io
 from web.models.host import Host
+
+
+def sync_host_info(host_id, uri):
+    host_info = DockerClient(base_url=uri).docker_info()
+    operate_system = host_info.get('OperatingSystem')
+    memory = math.ceil(int(host_info.get('MemTotal')) / 1024 / 1024 / 1024)
+    cpu = host_info.get('NCPU')
+    # outer_ip = 1
+    # inner_ip = 2
+    Host.upsert({'host_id': host_id}, host_id=host_id, operate_system=operate_system, memory=memory, cpu=cpu)
+    return True
 
 
 class HostSchema(ma.ModelSchema):
@@ -52,21 +68,20 @@ class HostAPI(Resource):
         user = Host.query.get_or_404(host_id)
         db.session.delete(user)
         db.session.commit()
-        return {"msg": "host deleted"}
+        return response(message='host deleted')
 
 
 class HostValid(Resource):
 
     def get(self, host_id):
-        cli = Host.query.get_or_404(host_id)
+        host = Host.query.get_or_404(host_id)
         if not Setting.has('ssh_private_key'):
             generate_and_save_ssh_key()
-        if ssh.ssh_ping(cli.ssh_ip, cli.ssh_port):
+        if ssh_ping(host.ssh_ip, host.ssh_port):
             try:
-                sync_host_info(host_id, cli.docker_uri)
+                sync_host_info(host_id, host.docker_uri)
             except DockerException:
-                return json_response(message='docker fail')
+                return response(message='docker fail')
         else:
-            return json_response(message='ssh fail')
-        return json_response()
-        pass
+            return response(message='ssh fail')
+        return response()

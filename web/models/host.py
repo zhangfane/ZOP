@@ -11,5 +11,12 @@ class Host(db.Model):
     ssh_ip = db.Column(db.String(32))
     ssh_port = db.Column(db.Integer)
 
+    operate_system = db.Column(db.String(64))
+    memory = db.Column(db.SmallInteger)
+    cpu = db.Column(db.SmallInteger)
+    disk = db.Column(db.SmallInteger)
+    outer_ip = db.Column(db.String(128))
+    inner_ip = db.Column(db.String(128))
+
     def __repr__(self):
         return '<Host %r>' % self.name
