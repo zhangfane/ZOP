@@ -1,5 +1,7 @@
 from . import views
-
+from . import errors
 __all__ = [
-    'views'
+    'views',
+    'errors'
+
 ]

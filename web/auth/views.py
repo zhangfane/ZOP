@@ -17,10 +17,10 @@ from web.auth.helpers import (
 )
 
 
-blueprint = Blueprint('auth', __name__, url_prefix='/auth')
+blueprint_auth = Blueprint('auth', __name__, url_prefix='/auth')
 
 
-@blueprint.route('/login', methods=['POST'])
+@blueprint_auth.route('/login', methods=['POST'])
 def login():
     """Authenticate user and return token
     """
@@ -48,7 +48,7 @@ def login():
     return jsonify(ret), 200
 
 
-@blueprint.route('/refresh', methods=['POST'])
+@blueprint_auth.route('/refresh', methods=['POST'])
 @jwt_refresh_token_required
 def refresh():
     current_user = get_jwt_identity()
@@ -60,7 +60,7 @@ def refresh():
     return jsonify(ret), 200
 
 
-@blueprint.route('/revoke_access', methods=['DELETE'])
+@blueprint_auth.route('/revoke_access', methods=['DELETE'])
 @jwt_required
 def revoke_access_token():
     jti = get_raw_jwt()['jti']
@@ -69,7 +69,7 @@ def revoke_access_token():
     return jsonify({"message": "token revoked"}), 200
 
 
-@blueprint.route('/revoke_refresh', methods=['DELETE'])
+@blueprint_auth.route('/revoke_refresh', methods=['DELETE'])
 @jwt_refresh_token_required
 def revoke_refresh_token():
     jti = get_raw_jwt()['jti']

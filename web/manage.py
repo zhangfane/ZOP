@@ -4,8 +4,9 @@ import click
 import sqlalchemy
 from flask.cli import FlaskGroup
 
-from app import create_app
 from flask_migrate import upgrade
+
+from web.app import create_app
 
 
 def create_web(info):

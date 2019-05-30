@@ -15,7 +15,6 @@ def create_app(testing=False, cli=False):
 
     configure_extensions(app, cli)
     register_blueprints(app)
-
     return app
 
 
@@ -32,5 +31,5 @@ def configure_extensions(app, cli):
 def register_blueprints(app):
     """register all blueprints for application
     """
-    app.register_blueprint(auth.views.blueprint)
-    app.register_blueprint(api.views.blueprint)
+    app.register_blueprint(auth.views.blueprint_auth)
+    app.register_blueprint(api.views.blueprint_api)

@@ -20,3 +20,14 @@ class Host(db.Model):
 
     def __repr__(self):
         return '<Host %r>' % self.name
+
+
+class HostExecTemplate(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    tpl_name = db.Column(db.String(50))
+    tpl_desc = db.Column(db.String(255))
+    tpl_type = db.Column(db.String(50))
+    tpl_content = db.Column(db.Text())
+
+    def __repr__(self):
+        return '<HostExecTemplate %r>' % self.tpl_name
